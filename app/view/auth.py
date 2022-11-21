@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user
-from app.models.user import User
-from app.forms.auth import LoginForm, RegistrationForm, ProfileForm, ForgotPasswordForm, PasswordResetForm
+from app.models import User
+from app.forms import LoginForm, RegistrationForm, ProfileForm, ForgotPasswordForm, PasswordResetForm
 from sqlalchemy import func
 
 auth_blueprint = Blueprint("auth", __name__)
@@ -101,7 +101,7 @@ def reset_password():
     return render_template("auth/reset_password.html", form=form)
 
 
-@auth_blueprint.route("/forgot_password/<reset_password_uuid>", methods=["GER", "POST"])
+@auth_blueprint.route('/forgot_password/<reset_password_uuid>', methods=["GET", "POST"])
 def forgot_password(reset_password_uuid: str):
     """ Forgot password user route. Input request from web page. Validates this request form.
         If user email has in our database password this user change on new password.
