@@ -2,12 +2,14 @@ import os
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_mail import Mail, Message
 from werkzeug.exceptions import HTTPException
 from flask_migrate import Migrate
 
 login_manager = LoginManager()
 db = SQLAlchemy()
 migration = Migrate()
+mail = Mail()
 
 
 def create_app(envoiroment="developement"):
@@ -29,6 +31,8 @@ def create_app(envoiroment="developement"):
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(main_blueprint)
     app.register_blueprint(plant_blueprint)
+
+    mail.init_app(app)
 
     @login_manager.user_loader
     def get_user(id):

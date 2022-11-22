@@ -2,7 +2,9 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user
 from app.models.user import User
 from app.forms.auth import LoginForm, RegistrationForm, ProfileForm, ForgotPasswordForm, PasswordResetForm
+from app import mail
 from sqlalchemy import func
+from flask_mail import Message
 
 auth_blueprint = Blueprint("auth", __name__)
 
@@ -93,6 +95,14 @@ def reset_password():
         if user:
             user.reset_password()
             print(url_for("auth.forgot_password", reset_password_uuid=user.reset_password_uuid, _external=True))
+            email_message = Message('Hello', sender='a2k_oleksii@ukr.net', recipients=['a2k1488@gmail.com'])
+            """ замінити: sender='sendler@mail', recipients=[str(form.email.data)] також підготувати повідомлення """
+            email_message.body = "This is the email body \n" + str(url_for("auth.forgot_password",
+                                                                           reset_password_uuid=user.reset_password_uuid,
+                                                                           _external=True))
+            # print(str(email_message))
+            mail.send(email_message)
+
             flash("Password reset successful.", "success")
             return redirect(url_for("main.index"))
         flash("User not found.", "danger")
@@ -101,7 +111,7 @@ def reset_password():
     return render_template("auth/reset_password.html", form=form)
 
 
-@auth_blueprint.route("/forgot_password/<reset_password_uuid>", methods=["GER", "POST"])
+@auth_blueprint.route("/forgot_password/<reset_password_uuid>", methods=["GET", "POST"])
 def forgot_password(reset_password_uuid: str):
     """ Forgot password user route. Input request from web page. Validates this request form.
         If user email has in our database password this user change on new password.
