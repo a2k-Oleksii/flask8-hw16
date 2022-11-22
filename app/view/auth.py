@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, current_user
 from app.models.user import User
 from app.forms.auth import LoginForm, RegistrationForm, ProfileForm, ForgotPasswordForm, PasswordResetForm
 from app import mail
+
 from sqlalchemy import func
 from flask_mail import Message
 
@@ -109,6 +110,7 @@ def reset_password():
     elif form.is_submitted():
         flash("The given data was invalid.", "danger")
     return render_template("auth/reset_password.html", form=form)
+
 
 
 @auth_blueprint.route("/forgot_password/<reset_password_uuid>", methods=["GET", "POST"])
