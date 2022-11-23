@@ -11,42 +11,33 @@ class BaseConfig:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False
 
-
     @staticmethod
     def configure(app):
         pass
 
 
 class MailConfig:
-    """ Повернути налаштування mailtrap :
-    MAIL_SERVER ='smtp.mailtrap.io'
-    MAIL_PORT = 2525
-    MAIL_USERNAME = 'bdda046ac24020'
-    MAIL_PASSWORD = '43925eadee03c6'
+    """Mail configuration"""
+    MAIL_SERVER = os.getenv("MAIL_SERVER")
+    MAIL_PORT = os.getenv("MAIL_PORT")
+    MAIL_USERNAME = os.getenv("MAIL_USERNAME")
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
-    """
-
-    MAIL_SERVER = 'smtp.ukr.net'
-    MAIL_PORT = 465
-    MAIL_USERNAME = 'a2k_oleksii@ukr.net'
-    MAIL_PASSWORD = 'ev4IRK2NUtyze54b'
-    MAIL_USE_TLS = False
-    MAIL_USE_SSL = True
 
 
 class DevelopmentConfig(BaseConfig, MailConfig):
     """Development configuration"""
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv("DEVELOPMENT_DATABASE_URL",
-                                         "sqlite:///" + os.path.join(base_dir, "development.sqlite3"))
+                                        "sqlite:///" + os.path.join(base_dir, "development.sqlite3"))
 
 
 class ProductionConfig(BaseConfig, MailConfig):
     """Production configuration"""
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL",
-                                         "sqlite:///" + os.path.join(base_dir, "production.sqlite3"))
+                                        "sqlite:///" + os.path.join(base_dir, "production.sqlite3"))
     WTF_CSRF_ENABLED = True
 
 

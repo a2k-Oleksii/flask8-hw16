@@ -3,7 +3,6 @@ from flask_login import login_user, logout_user, current_user
 from app.models.user import User
 from app.forms.auth import LoginForm, RegistrationForm, ProfileForm, ForgotPasswordForm, PasswordResetForm
 from app import mail
-
 from sqlalchemy import func
 from flask_mail import Message
 
@@ -96,21 +95,18 @@ def reset_password():
         if user:
             user.reset_password()
             print(url_for("auth.forgot_password", reset_password_uuid=user.reset_password_uuid, _external=True))
-            email_message = Message('Hello', sender='a2k_oleksii@ukr.net', recipients=['a2k1488@gmail.com'])
-            """ замінити: sender='sendler@mail', recipients=[str(form.email.data)] також підготувати повідомлення """
-            email_message.body = "This is the email body \n" + str(url_for("auth.forgot_password",
-                                                                           reset_password_uuid=user.reset_password_uuid,
-                                                                           _external=True))
-            # print(str(email_message))
+            email_message = Message('Hello', sender='sendler@mail.com', recipients=[str(form.email.data)])
+            email_message.body = "From change password your account, follow this link:\n\n" + str(
+                url_for("auth.forgot_password",
+                        reset_password_uuid=user.reset_password_uuid,
+                        _external=True)) + "\n\nIf you don't want to change password your account, ignore this message!"
             mail.send(email_message)
-
-            flash("Password reset successful.", "success")
+            flash("A link to change your password has been sent to the email address.", "success")
             return redirect(url_for("main.index"))
         flash("User not found.", "danger")
     elif form.is_submitted():
         flash("The given data was invalid.", "danger")
     return render_template("auth/reset_password.html", form=form)
-
 
 
 @auth_blueprint.route("/forgot_password/<reset_password_uuid>", methods=["GET", "POST"])
